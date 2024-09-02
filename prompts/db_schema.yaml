@@ -1,0 +1,165 @@
+_type: prompt
+input:
+  - input
+template: |
+  Given below are the table structures in the analytics database raw schema in the aws cloud database:
+
+  CREATE TABLE `buyers` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `Device ID` varchar(100) DEFAULT NULL,
+    `Organisation` varchar(100) DEFAULT NULL,
+    `year` int DEFAULT NULL,
+    `Transaction ID` varchar(100) DEFAULT NULL,
+    `January` decimal(10,4) DEFAULT NULL,
+    `February` decimal(10,4) DEFAULT NULL,
+    `March` decimal(10,4) DEFAULT NULL,
+    `April` decimal(10,4) DEFAULT NULL,
+    `May` decimal(10,4) DEFAULT NULL,
+    `June` decimal(10,4) DEFAULT NULL,
+    `July` decimal(10,4) DEFAULT NULL,
+    `August` decimal(10,4) DEFAULT NULL,
+    `September` decimal(10,4) DEFAULT NULL,
+    `October` decimal(10,4) DEFAULT NULL,
+    `November` decimal(10,4) DEFAULT NULL,
+    `December` decimal(10,4) DEFAULT NULL,
+    `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `Status` varchar(100) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+  );
+
+  CREATE TABLE `draft` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `Transaction_ID` varchar(100) DEFAULT NULL,
+    `Draft_Data` json DEFAULT NULL,
+    `Organisation` varchar(255) DEFAULT NULL,
+    `requirement` decimal(20,4) DEFAULT NULL,
+    `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `productionPeriodFrom` int DEFAULT NULL,
+    `productionPeriodTo` int DEFAULT NULL,
+    `CoDYear` varchar(255) DEFAULT NULL,
+    `type` varchar(255) DEFAULT NULL,
+    `Status` tinyint(1) DEFAULT '1',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `Transaction_ID` (`Transaction_ID`)
+  );
+
+  CREATE TABLE `inventory2` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `Device ID` varchar(50) DEFAULT NULL,
+    `Group` varchar(50) DEFAULT NULL,
+    `company` varchar(50) DEFAULT NULL,
+    `project` varchar(100) DEFAULT NULL,
+    `Type` varchar(50) DEFAULT NULL,
+    `CoD` date DEFAULT NULL,
+    `Commission_start` date DEFAULT NULL,
+    `Commission_end` date DEFAULT NULL,
+    `Year` int DEFAULT NULL,
+    `S.No` int DEFAULT NULL,
+    `Capacity (MW)` decimal(10,2) DEFAULT NULL,
+    `Month` varchar(50) DEFAULT NULL,
+    `Actual` decimal(20,4) DEFAULT NULL,
+    `Actual_used` decimal(20,4) DEFAULT NULL,
+    `Estimated` decimal(20,4) DEFAULT NULL,
+    `Estimated_used` decimal(20,4) DEFAULT NULL,
+    `Issued` decimal(20,4) DEFAULT NULL,
+    `Registered` varchar(50) DEFAULT NULL,
+    `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `Project ID` varchar(255) DEFAULT NULL,
+    `Production Status` varchar(100) DEFAULT NULL,
+    `PAN` varchar(50) DEFAULT NULL,
+    `GST` varchar(50) DEFAULT NULL,
+    `invoice_status` varchar(255) DEFAULT 'False',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `unique_device_month_year` (`Device ID`,`Month`,`Year`)
+  );
+
+  CREATE TABLE `invoicedata` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `invoiceid` varchar(255) DEFAULT NULL,
+    `groupName` varchar(255) DEFAULT NULL,
+    `capacity` decimal(10,4) DEFAULT NULL,
+    `regNo` int DEFAULT NULL,
+    `regdevice` varchar(255) DEFAULT NULL,
+    `issued` decimal(10,4) DEFAULT NULL,
+    `ISP` decimal(10,4) DEFAULT NULL,
+    `registrationFee` decimal(10,4) DEFAULT NULL,
+    `issuanceFee` decimal(10,4) DEFAULT NULL,
+    `USDExchange` decimal(10,4) DEFAULT NULL,
+    `EURExchange` decimal(10,4) DEFAULT NULL,
+    `invoicePeriodFrom` date DEFAULT NULL,
+    `invoicePeriodTo` date DEFAULT NULL,
+    `gross` decimal(15,4) DEFAULT NULL,
+    `regFeeINR` decimal(10,4) DEFAULT NULL,
+    `issuanceINR` decimal(10,4) DEFAULT NULL,
+    `netRevenue` decimal(15,4) DEFAULT NULL,
+    `successFee` decimal(15,4) DEFAULT NULL,
+    `finalRevenue` decimal(15,4) DEFAULT NULL,
+    `project` text,
+    `netRate` decimal(10,4) DEFAULT NULL,
+    `pan` varchar(255) DEFAULT NULL,
+    `gst` varchar(255) DEFAULT NULL,
+    `address` varchar(255) DEFAULT NULL,
+    `date` date DEFAULT NULL,
+    `deviceIds` varchar(255) DEFAULT NULL,
+    `companyName` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+  );
+
+  CREATE TABLE `invoicereg` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `Device ID` varchar(50) DEFAULT NULL,
+    `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `Device ID` (`Device ID`)
+  );
+
+  CREATE TABLE `sellers` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `seller` varchar(100) DEFAULT NULL,
+    `group` varchar(100) DEFAULT NULL,
+    `gst` varchar(20) DEFAULT NULL,
+    `pan` varchar(20) DEFAULT NULL,
+    `address` varchar(200) DEFAULT NULL,
+    `indicative_price` decimal(10,2) DEFAULT NULL,
+    `success_fee` decimal(5,2) DEFAULT NULL,
+    `createdAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `gst_pan_unique` (`gst`,`pan`)
+  );
+
+  Modify user questions to respond with an SQL query(Response only in MySQL query,Don't include any other text). Return the query in all capital letters. Only return the query and nothing else. Only perform SELECT queries.
+
+  Example 1:
+  User: What is the total estimated credits for the year 2022?
+  Your generated SQL query:
+    SELECT SUM(Estimated) FROM inventory2 WHERE year = 2022;
+
+  Example 2:
+  User: What is the total credits sold for the year 2022?
+  Your generated SQL query:
+    SELECT SUM(Issued) FROM inventory2 WHERE year = 2022;
+
+  Example 3:
+  User: What is the total Actual credits used for the year 2022?
+  Your generated SQL query:
+    SELECT SUM(Actual_used) FROM inventory2 WHERE year = 2022;
+
+  Example 4:
+  User: What is the total Actual credits used and Estimated credits for the year 2022?
+  Your generated SQL query:
+    SELECT SUM(Actual_used), SUM(Estimated) FROM inventory2 WHERE year = 2022;
+
+  Example 5:
+  User: What is the difference between total Estimated credits and total Actual credits used for the year 2022?
+  Your generated SQL query:
+    SELECT SUM(Estimated) - SUM(Actual_used) FROM inventory2 WHERE year = 2022;
+
+  Example 6:
+  User: What are the total credits issued, total credits used, and the difference between them for the year 2022?
+  Your generated SQL query:
+    SELECT SUM(Issued), SUM(Actual_used), SUM(Issued) - SUM(Actual_used) FROM inventory2 WHERE year = 2022;
